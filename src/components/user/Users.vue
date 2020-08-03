@@ -39,7 +39,8 @@
                         <el-button type="danger" icon="el-icon-delete" size="mini"
                                    @click="removeUserById(scope.row.id)"></el-button>
                         <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-                            <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                            <el-button type="warning" icon="el-icon-setting" size="mini"
+                                       @click="showSetRole(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -98,9 +99,33 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-    <el-button @click="editDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="editUser">确 定</el-button>
-  </span>
+                <el-button @click="editDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="editUser">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 修改权限对话框 -->
+        <el-dialog
+            title="提示"
+            :visible.sync="setRoleDialogVisible"
+            width="50%">
+            <p>当前用户：{{ userInfo.username }}</p>
+            <p>当前角色：{{ userInfo.role_name }}</p>
+            <p>分配新角色：
+                <template>
+                    <el-select v-model="selectedList" placeholder="请选择" :popper-append-to-body="false">
+                        <el-option
+                            v-for="item in rolesList"
+                            :key="item.id"
+                            :label="item.roleName"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                </template>
+            </p>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveRole">确 定</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -204,7 +229,14 @@ export default {
                     }
                 ]
 
-            }
+            },
+            // 控制权限管理对话框的显示与隐藏
+            setRoleDialogVisible: false,
+            // 用户信息
+            userInfo: {},
+            // 角色列表
+            rolesList: [],
+            selectedList: []
         }
     },
     created () {
@@ -302,6 +334,25 @@ export default {
             if (res.meta.status !== 200) return this.$message.error('删除用户失败!')
             this.$message.success('删除用户成功!')
             // 刷新用户列表
+            this.getUserList()
+        },
+        // 显示分配角色对话框
+        async showSetRole (userInfo) {
+            this.setRoleDialogVisible = true
+            // console.log(userInfo)
+            let { data: res } = await this.$http.get('roles')
+            this.rolesList = res.data
+            this.userInfo = userInfo
+        },
+        // 发送权限修改请求
+        async saveRole () {
+            if (!this.selectedList) {
+                return this.$message.error('请选择角色!')
+            }
+            let { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, { rid: this.selectedList })
+            if (res.meta.status !== 200) return this.$message.error('设置角色失败!')
+            this.$message.success('设置角色成功!')
+            this.setRoleDialogVisible = false
             this.getUserList()
         }
     }

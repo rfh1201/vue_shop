@@ -57,7 +57,7 @@ export default {
             },
             isCollapse: false,
             // 记录当前被选中那一项的index
-            index: ''
+            index: '/users'
         }
     },
     created () {
@@ -135,5 +135,9 @@ export default {
     letter-spacing: 0.2em;
     line-height: 24px;
     cursor: pointer;
+}
+
+{
+align-items: center;
 }
 </style>
