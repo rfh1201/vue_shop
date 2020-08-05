@@ -20,7 +20,7 @@ module.exports = {
     'space-before-function-paren': 0
   },
 
-  'extends': [
+  extends: [
     'plugin:vue/strongly-recommended',
     '@vue/standard'
   ]

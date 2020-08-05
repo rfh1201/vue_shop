@@ -1,85 +1,106 @@
 <template>
-    <div class="login_container">
-        <div class="login_box">
-            <!-- 头像区域 -->
-            <div class="avatar_box">
-                <img src="../assets/images/1.png">
-            </div>
-            <!-- 登录表单区域 -->
-            <el-form ref="loginRef" class="login_form" :model="formData" :rules="inputRules">
-                <!-- 用户名 -->
-                <el-form-item prop="username">
-                    <el-input prefix-icon="iconfont icon-users" v-model="formData.username"></el-input>
-                </el-form-item>
-                <!-- 密码 -->
-                <el-form-item prop="password">
-                    <el-input prefix-icon="iconfont icon-3702mima" type="password"
-                              v-model="formData.password"></el-input>
-                </el-form-item>
-                <el-form-item class="login_btn">
-                    <el-button type="primary" @click="validate">登录</el-button>
-                    <el-button type="info" @click="reset">重置</el-button>
-                </el-form-item>
-            </el-form>
-        </div>
+  <div class="login_container">
+    <div class="login_box">
+      <!-- 头像区域 -->
+      <div class="avatar_box">
+        <img src="../assets/images/1.png">
+      </div>
+      <!-- 登录表单区域 -->
+      <el-form
+        ref="loginRef"
+        class="login_form"
+        :model="formData"
+        :rules="inputRules"
+      >
+        <!-- 用户名 -->
+        <el-form-item prop="username">
+          <el-input
+            prefix-icon="iconfont icon-users"
+            v-model="formData.username"
+          />
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item prop="password">
+          <el-input
+            prefix-icon="iconfont icon-3702mima"
+            type="password"
+            v-model="formData.password"
+          />
+        </el-form-item>
+        <el-form-item class="login_btn">
+          <el-button
+            type="primary"
+            @click="validate"
+          >
+            登录
+          </el-button>
+          <el-button
+            type="info"
+            @click="reset"
+          >
+            重置
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    data () {
-        return {
-            formData: {
-                username: 'admin',
-                password: '123456'
-            },
-            inputRules: {
-                username: [
-                    {
-                        required: true,
-                        message: '请输入用户名',
-                        trigger: 'blur'
-                    },
-                    {
-                        max: 8,
-                        min: 3,
-                        message: '请输入 3 到 8 位之间的用户名',
-                        trigger: 'blur'
-                    }
-                ],
-                password: [
-                    {
-                        required: true,
-                        message: '请输入密码',
-                        trigger: 'blur'
-                    },
-                    {
-                        max: 16,
-                        min: 6,
-                        message: '请输入 6 到 16 位之间的密码',
-                        trigger: 'blur'
-                    }
-                ]
-            }
-        }
-    },
-    methods: {
-        reset () {
-            this.$refs.loginRef.resetFields()
-        },
-        validate () {
-            this.$refs.loginRef.validate(async (valid) => {
-                if (!valid) return
-                let { data } = await this.$http.post('login', this.formData)
-                // 如果登录失败直接return 结束函数继续往下进行
-                if (data.meta.status != 200) return this.$message.error('登录失败, 请检查您的用户名或密码是否正确!')
-                this.$message.success('登录成功')
-                // 将token存储到sessionStorage中
-                window.sessionStorage.setItem('token', data.data.token)
-                this.$router.push('/home')
-            })
-        }
+  data () {
+    return {
+      formData: {
+        username: 'admin',
+        password: '123456'
+      },
+      inputRules: {
+        username: [
+          {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
+          },
+          {
+            max: 8,
+            min: 3,
+            message: '请输入 3 到 8 位之间的用户名',
+            trigger: 'blur'
+          }
+        ],
+        password: [
+          {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          },
+          {
+            max: 16,
+            min: 6,
+            message: '请输入 6 到 16 位之间的密码',
+            trigger: 'blur'
+          }
+        ]
+      }
     }
+  },
+  methods: {
+    reset () {
+      this.$refs.loginRef.resetFields()
+    },
+    validate () {
+      this.$refs.loginRef.validate(async (valid) => {
+        if (!valid) return
+        const { data } = await this.$http.post('login', this.formData)
+        // 如果登录失败直接return 结束函数继续往下进行
+        if (data.meta.status != 200) return this.$message.error('登录失败, 请检查您的用户名或密码是否正确!')
+        this.$message.success('登录成功')
+        // 将token存储到sessionStorage中
+        window.sessionStorage.setItem('token', data.data.token)
+        this.$router.push('/home')
+      })
+    }
+  }
 }
 </script>
 
