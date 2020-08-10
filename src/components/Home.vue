@@ -87,6 +87,7 @@ export default {
         102: 'iconfont icon-danju',
         145: 'iconfont icon-baobiao'
       },
+        // 记录菜单是否展开
       isCollapse: false,
       // 记录当前被选中那一项的index
       index: '/users'
@@ -94,7 +95,7 @@ export default {
   },
   created () {
     this.getMenuList()
-    this.index = sessionStorage.getItem('index')
+    this.index = sessionStorage.getItem('index') ? sessionStorage.getItem('index') : this.index
   },
   methods: {
     logout () {
@@ -105,7 +106,6 @@ export default {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error('获取菜单列表失败')
       this.menuList = res.data
-      // console.log(this.menuList)
     },
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
